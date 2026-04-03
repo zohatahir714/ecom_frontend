@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { api } from '../api';
 import { useAuth } from '../auth/AuthContext';
 
 const ORDER_STATUSES = [
@@ -44,9 +44,9 @@ const AdminDashboard = () => {
 
   const fetchAll = async () => {
     const [productsRes, usersRes, ordersRes] = await Promise.all([
-      axios.get('/api/products'),
-      axios.get('/api/users'),
-      axios.get('/api/orders'),
+      api.get('/products'),
+      api.get('/users'),
+      api.get('/orders'),
     ]);
     setProducts(productsRes.data);
     setUsers(usersRes.data);
@@ -78,11 +78,11 @@ const AdminDashboard = () => {
       if (newProduct.imageFile) formData.append('image', newProduct.imageFile);
 
       if (newProduct.imageFile) {
-        await axios.post('/api/products', formData, {
+        await api.post('/products', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       } else {
-        await axios.post('/api/products', {
+        await api.post('/products', {
           name: newProduct.name,
           description: newProduct.description || undefined,
           price: parseFloat(newProduct.price),
@@ -131,11 +131,11 @@ const AdminDashboard = () => {
         formData.append('price', parseFloat(editingProduct.price));
         formData.append('category', editingProduct.category || 'Pizzas');
         formData.append('image', editingProduct.imageFile);
-        await axios.put(`/api/products/${editingProduct._id}`, formData, {
+        await api.put(`/products/${editingProduct._id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
       } else {
-        await axios.put(`/api/products/${editingProduct._id}`, {
+        await api.put(`/products/${editingProduct._id}`, {
           name: editingProduct.name,
           description: editingProduct.description || undefined,
           price: parseFloat(editingProduct.price),
@@ -153,13 +153,13 @@ const AdminDashboard = () => {
 
   const toggleUserRole = async (user) => {
     const newRole = user.role === 'admin' ? 'user' : 'admin';
-    await axios.put(`/api/users/${user._id}/role`, { role: newRole });
+    await api.put(`/users/${user._id}/role`, { role: newRole });
     fetchAll();
   };
 
   const toggleUserBlock = async (user) => {
     try {
-      await axios.put(`/api/users/${user._id}/block`, { isBlocked: !user.isBlocked });
+      await api.put(`/users/${user._id}/block`, { isBlocked: !user.isBlocked });
       fetchAll();
       showToast(`User ${user.isBlocked ? 'unblocked' : 'blocked'} successfully.`, 'success');
     } catch (err) {
@@ -175,7 +175,7 @@ const AdminDashboard = () => {
   const handleStatusChange = async (orderId, newStatus) => {
     setLoadingStatusId(orderId);
     try {
-      await axios.put(`/api/orders/${orderId}/status`, { status: newStatus });
+      await api.put(`/orders/${orderId}/status`, { status: newStatus });
       setOrders((prev) =>
         prev.map((o) => (o._id === orderId ? { ...o, status: newStatus } : o))
       );
@@ -189,7 +189,7 @@ const AdminDashboard = () => {
 
   const openStatusHistory = async (orderId) => {
     try {
-      const res = await axios.get(`/api/orders/${orderId}/status`);
+      const res = await api.get(`/orders/${orderId}/status`);
       setStatusHistory({ orderId, ...res.data });
     } catch {
       showToast('Could not load status history.', 'error');

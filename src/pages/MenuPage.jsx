@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { api } from '../api';
 import { useAuth } from '../auth/AuthContext';
 import { useCart } from '../context/CartContext';
 import ProductCard from '../components/ProductCard';
@@ -45,7 +45,7 @@ const MenuPage = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/products').then((res) => setProducts(res.data)).catch(console.error);
+    api.get('/products').then((res) => setProducts(res.data)).catch(console.error);
   }, []);
 
   useEffect(() => {

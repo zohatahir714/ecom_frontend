@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import { api } from '../api';
 import { useAuth } from '../auth/AuthContext';
 
 const LoginPage = () => {
@@ -19,7 +19,7 @@ const LoginPage = () => {
     setError('');
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/signin', form);
+      const res = await api.post('/auth/signin', form);
       login(res.data.token, res.data.user);
       navigate(res.data.user.role === 'admin' ? '/admin' : '/');
     } catch (err) {

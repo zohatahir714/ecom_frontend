@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { api } from '../api';
 import { useAuth } from '../auth/AuthContext';
 
 const EmailIcon = () => (
@@ -57,11 +57,11 @@ const AuthPage = () => {
     setLoading(true);
     try {
       if (isLogin) {
-        const res = await axios.post('/api/auth/signin', { email: form.email, password: form.password });
+        const res = await api.post('/auth/signin', { email: form.email, password: form.password });
         login(res.data.token, res.data.user);
         navigate(res.data.user.role === 'admin' ? '/admin' : '/');
       } else {
-        const res = await axios.post('/api/auth/signup', form);
+        const res = await api.post('/auth/signup', form);
         login(res.data.token, res.data.user);
         navigate('/');
       }

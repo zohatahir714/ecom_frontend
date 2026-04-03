@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { api } from '../api';
 
 const CategoryNav = () => {
   const [categories, setCategories] = useState([]);
@@ -7,8 +7,8 @@ const CategoryNav = () => {
 
   useEffect(() => {
     let mounted = true;
-    axios
-      .get('/api/categories')
+    api
+      .get('/categories')
       .then((res) => {
         if (mounted) setCategories(res.data || []);
       })

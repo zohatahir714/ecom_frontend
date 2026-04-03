@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { api } from '../api';
 import { useAuth } from '../auth/AuthContext';
 import { useCart } from '../context/CartContext';
 
@@ -19,10 +19,10 @@ const UserDashboard = () => {
     if (cart.length === 0) return;
     try {
       const items = cart.map((c) => ({ product: c.product._id, quantity: c.quantity }));
-      await axios.post('/api/orders', { items });
+      await api.post('/orders', { items });
       setMessage('Order placed successfully!');
       clearCart();
-      const ordersRes = await axios.get('/api/orders/my');
+      const ordersRes = await api.get('/orders/my');
       setOrders(ordersRes.data);
       setActiveTab('orders');
     } catch {
@@ -31,7 +31,7 @@ const UserDashboard = () => {
   };
 
   useEffect(() => {
-    axios.get('/api/orders/my').then((res) => setOrders(res.data)).catch(console.error);
+    api.get('/orders/my').then((res) => setOrders(res.data)).catch(console.error);
   }, []);
 
   return (
