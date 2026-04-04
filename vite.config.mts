@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  // Dev: forward browser requests for /api and /uploads to the local Express backend.
   const backendUrl = env.VITE_BACKEND_URL || 'http://localhost:5000';
 
   return {
@@ -10,8 +11,8 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 5173,
       proxy: {
-        '/api': backendUrl,
-        '/uploads': backendUrl,
+        '/api': { target: backendUrl, changeOrigin: true },
+        '/uploads': { target: backendUrl, changeOrigin: true },
       },
     },
   };
